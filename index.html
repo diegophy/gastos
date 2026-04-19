@@ -497,7 +497,28 @@ function exportCSV(){
 })();
 
 if(sheetsURL)document.getElementById('shStatus').textContent='Conectado ✓';
-renderHome();
+
+// Lee parámetros de URL enviados por el Atajo de iOS
+// Ejemplo: https://diegophy.github.io/gastos?monto=36000&comercio=McDonald%27s
+(function readURLParams(){
+  const params=new URLSearchParams(window.location.search);
+  const monto=params.get('monto');
+  const comercio=params.get('comercio');
+  if(monto||comercio){
+    // Limpiar URL sin recargar
+    window.history.replaceState({},'',window.location.pathname);
+    // Abrir pantalla de agregar con datos pre-llenados
+    renderHome();
+    setTimeout(()=>{
+      openAdd({
+        name: comercio ? decodeURIComponent(comercio) : '',
+        amount: monto ? parseFloat(monto.replace(/[^0-9.]/g,'')) : ''
+      });
+    }, 100);
+  } else {
+    renderHome();
+  }
+})();
 </script>
 </body>
 </html>
